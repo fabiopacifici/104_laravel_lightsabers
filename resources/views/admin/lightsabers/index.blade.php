@@ -36,12 +36,17 @@
                             <td>
 
                                 <a href="{{route('lightsabers.show', $saber->id)}}" class="btn btn-primary">View</a>
+                                <a href="{{route('lightsabers.edit', $saber->id)}}" class="btn btn-secondary">Edit</a>
 
-                                /Edit/Delete
+                                Delete
                             </td>
                         </tr>
                         @empty
+                        <tr class="">
 
+                            <td>Oops! No sabers yet!</td>
+
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>

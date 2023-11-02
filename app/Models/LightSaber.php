@@ -9,5 +9,11 @@ class LightSaber extends Model
 {
     use HasFactory;
 
+    /* Todo: check if needed or remove */
     protected $table = "light_sabers";
+
+    protected $fillable = ['name', 'cover_image', 'description', 'price'];
+
+    // danger! disable mass assignmetn completely
+    //protected $guarded = [];
 }

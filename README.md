@@ -1,66 +1,214 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CRUD Ops
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- createa Model
+- create the migration for the given model
+- create resource controller for the given model
+- create resource routes
+- implement the resource controller methods
 
-## About Laravel
+## Create a Model
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+```bash
+# create model/migration/seeder
+php artisan make:model Lightsaber -ms
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+remember to define the migration and seeders to add some data to the db.
+remember to edit .env to connect your db.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Create Resource Controller
 
-## Learning Laravel
+Create a resource controller called LightsabersController inside Admin/ folder (namespace)
+and associates it to the Model
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+php artisan make:controller Admin/LightsabersController --resource --model=Lightsaber
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Create Route Resource
 
-## Laravel Sponsors
+Inside web.php create a route resource for the model. Using the uri as its path and the created controler.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+```php
 
-### Premium Partners
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+// uri, Controller
+Route::resource('admin/lightsabers', LightsabersController::class);
 
-## Contributing
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+⚡ ATTENTION:
+Remember to import the controller at the top of the web.php file.
 
-## Code of Conduct
+```php
+use App\Http\Controllers\Admin\LightsabersController;
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+//...
 
-## Security Vulnerabilities
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+NOTE:
+A route resource can be defined as single routes using all different methods.
 
-## License
+```php
+/* Versione estesa della route:resource('lightsabers', LightsabersController::class);
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+// READ
+Route::get('/lightsabers', [LightsabersController::class, 'index'])->name('sabers.index');
+//CRETE
+Route::get('/lightsabers/create', [LightsabersController::class, 'create'])->name('sabers.create');
+//CREATE
+Route::post('/lightsabers', [LightsabersController::class, 'store'])->name('sabers.store');
+//READ
+Route::get('/lightsabers/{lightsaber}', [LightsabersController::class, 'show'])->name('sabers.show');
+
+//UPDATE
+Route::get('/lightsabers/{lightsaber}/edit', [LightsabersController::class, 'edit'])->name('sabers.edit');
+
+Route::put('/admin/lightsabers/{lightsaber}', [LightsabersController::class, 'update'])->name('sabers.update');
+
+// DELETE
+Route::delete('/admin/lightsabers/{lightsaber}', [LightsabersController::class, 'destroy'])->name('sabers.destroy');
+*/
+
+
+```
+
+## implement the resource controller methods
+
+### Implement the index method to show a list of resources
+
+```php
+
+// this responds to the route with a name lightsabers.index as defined by the resource controller
+
+public function index(){
+    // implement the logic
+
+    // take all data for the give model from the db
+    $sabers = Lightsaber::all();
+    // return the view and pass the data to it.
+    return view('admin.lightsabers', compact('sabers')); // <-- pay attention to the convention used by laravel
+
+}
+
+```
+
+### Implement the create method
+
+Here we return a view with a form
+
+```php
+
+  /**
+     * Show the form for creating a new resource.
+     */
+    public function create() // risponde alla rotta /admin/lightsabers/create (GET)
+    {
+        return view('admin.lightsabers.create'); // <-- pay attention to the convention used by laravel
+    }
+
+```
+
+We can create a form inside the view called admin/lightsabvers/create
+
+```php
+@extends('layouts.admin')
+
+
+@section('content')
+
+<div class="container">
+
+    //👇 The action must point to the store route that will handle the request to save the record in the db
+    <form action="{{route('lightsabers.store')}}" method="POST" enctype="multipart/form-data">
+        // use the multipart form data to store files           👆
+        <!-- 👇 // Attention to Cross site request forgery attacks -->
+        @csrf
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            // Add the name attribute to the inputs 👇
+            <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Acolyte Eco Battle staff">
+            <small id="nameHelper" class="form-text text-muted">Type the name here</small>
+        </div>
+
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <input type="number" step="0.01" class="form-control" name="price" id="price" aria-describedby="helpId" placeholder="99.99">
+            <small id="priceHelper" class="form-text text-muted">Type the price here</small>
+
+        </div>
+
+        <div class="mb-3">
+            <label for="cover_image" class="form-label">Choose file</label>
+            <input type="file" class="form-control" name="cover_image" id="cover_image" placeholder="" aria-describedby="cover_image_helper">
+            <div id="cover_image_helper" class="form-text">Upload an image for the current product</div>
+        </div>
+
+
+        <button type="submit" class="btn btn-primary">
+            Save
+        </button>
+
+
+    </form>
+
+</div>
+
+
+@endsection
+```
+
+Save the records in the db using `::create`
+
+```php
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request) // risponde alla rotta /admin/lightsabers (POST)
+    {
+        //dd($request->all());
+
+        $data = $request->all();
+        //$file_path = null;
+        if ($request->has('cover_image')) {
+            $file_path =  Storage::put('sabers_images', $request->cover_image);
+            $data['cover_image'] = $file_path;
+        }
+        //dd($file_path);
+
+
+        # Add a new record the the db
+
+        /* Without mass assignment of fields
+        $saber = new LightSaber();
+        $saber->name = $request->name;
+        $saber->price = $request->price;
+        $saber->cover_image = $file_path;
+        $saber->save();
+        */
+        
+        # With mass assignment
+        //dd($data);
+        $lightsaber = LightSaber::create($data);
+
+
+        // redirectthe user to a get route, follow the pattern ->  POST/REDIRECT/GET
+        return to_route('lightsabers.show', $lightsaber); // new function to_route() laravel 9
+    }
+
+```
+
+⚡⚡ Attention to the mass assignment error!
+When using the create mehtod on the Model instance we must add a fillable property inside the model
+For instance:
+
+```php
+// Lightsaber model
+protected $fillable = ['name', 'cover_image', 'description', 'price'];
+
+```
+
+Add inside the array all fileds used in the create form to save the data.
+Without the fillable props you won't be able to save that field in the db.

@@ -61,7 +61,7 @@ class SabersController extends Controller
 
         // redirectthe user to a get route, follow the pattern ->  POST/REDIRECT/GET
         // return redirect()->route('lightsabers.index')
-        return to_route('lightsabers.show', $lightsaber); // new function to_route() laravel 9
+        return to_route('lightsabers.index')->with('message', 'Welldone! Saber created successfully 👍'); // new function to_route() laravel 9
     }
 
     /**
@@ -112,7 +112,7 @@ class SabersController extends Controller
         //dd($data);
 
         $lightsaber->update($data);
-        return to_route('lightsabers.show', $lightsaber); // new function to_route() laravel 9
+        return to_route('lightsabers.index')->with('message', 'Welldone! Saber updated successfully 👍'); // new function to_route() laravel 9
 
     }
 
@@ -121,6 +121,12 @@ class SabersController extends Controller
      */
     public function destroy(LightSaber $lightsaber)
     {
-        //
+        //dd($lightsaber);
+        if (!is_null($lightsaber->cover_image)) {
+            Storage::delete($lightsaber->cover_image);
+        }
+        $lightsaber->delete();
+        // POST REDIRECT GET
+        return to_route('lightsabers.index')->with('message', 'Welldone! Saber deleted successfully 👍');
     }
 }

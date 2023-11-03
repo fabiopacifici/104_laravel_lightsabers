@@ -10,7 +10,9 @@ class LightSaber extends Model
     use HasFactory;
 
     /* Todo: check if needed or remove */
-    protected $table = "light_sabers";
+    //protected $table = "travels";
+
+
 
     protected $fillable = ['name', 'cover_image', 'description', 'price'];
 

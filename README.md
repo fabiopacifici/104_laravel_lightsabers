@@ -175,6 +175,20 @@ Route::delete('/admin/lightsabers/{lightsaber}', [LightsabersController::class, 
 
 ```
 
+Before moving forward we need to set the migration and seeder and populate the db with data!
+
+### Define the migration
+
+todo
+
+### Define the seeder
+
+todo
+
+### Seed the db
+
+todo
+
 ### implement the resource controller methods
 
 #### Implement the index method to show a list of resources

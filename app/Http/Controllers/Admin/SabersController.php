@@ -74,8 +74,6 @@ class SabersController extends Controller
         //dd($val_data);
         LightSaber::create($val_data);
 
-        // LightSaber::fill() // alternativa
-
 
         // redirectthe user to a get route, follow the pattern ->  POST/REDIRECT/GET
         // return redirect()->route('lightsabers.index')

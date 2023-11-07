@@ -542,4 +542,4 @@ Read the docs [here](https://laravel.com/docs/10.x/responses#redirecting-with-fl
 
 ## Add validation
 
-lorem
+lorem lorem lorem lorem

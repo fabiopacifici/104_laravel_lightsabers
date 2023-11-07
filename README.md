@@ -539,3 +539,7 @@ To see the session message in the view that the user is redirected to, we need t
 ```
 
 Read the docs [here](https://laravel.com/docs/10.x/responses#redirecting-with-flashed-session-data)
+
+## Add validation
+
+lorem

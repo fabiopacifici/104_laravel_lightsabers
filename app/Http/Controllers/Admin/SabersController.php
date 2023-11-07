@@ -18,7 +18,7 @@ class SabersController extends Controller
 
     public function index() // risponde alla rotta /admin/lightsabers (GET)
     {
-        // Show also trashed results in the table using ['sabers' => LightSaber::withTrashed()->get()]
+
         return view('admin.lightsabers.index', ['sabers' => LightSaber::all()]);
     }
 

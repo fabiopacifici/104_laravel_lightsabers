@@ -40,7 +40,15 @@
 
                         @forelse ($sabers as $saber)
                         <tr class="">
-                            <td scope="row">{{$saber->id}}</td>
+                            <td scope="row">
+                                {{$saber->id}}
+
+
+                                <!-- Works only is using withTrashed()->get() to return the data to this view -->
+                                @if($saber->trashed())
+                                I was trashed
+                                @endif
+                            </td>
                             <td>
                                 <!--  <img width="100" src="{{$saber->cover_image}}" alt=""> -->
                                 <img width="100" src="{{ asset('storage/' . $saber->cover_image) }}" alt="">
@@ -49,12 +57,12 @@
                             <td>{{$saber->name}}</td>
                             <td>
 
-                                <!-- Different options to do the same thing
+                                {{--<!-- Different options to do the same thing
                                 <a href="{{route('lightsabers.show', $saber->id)}}" class="btn btn-primary">View</a>
                                 <a href="{{route('lightsabers.show', $saber)}}" class="btn btn-primary">View</a>
                                 <a href="{{route('lightsabers.show', ['id' => $saber->id)}}" class="btn btn-primary">View</a>
                                 <a href="{{route('lightsabers.show', ['id' => $saber)}}" class="btn btn-primary">View</a>-->
-
+                                --}}
                                 <a href="{{route('lightsabers.show', $saber->id)}}" class="btn btn-primary">View</a>
                                 <a href="{{route('lightsabers.edit', $saber->id)}}" class="btn btn-secondary">Edit</a>
 

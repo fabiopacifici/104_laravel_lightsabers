@@ -7,16 +7,18 @@ use App\Models\LightSaber;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
-
+use App\Http\Requests\StoreLightsaberRequest;
+use App\Http\Requests\UpdateLightsaberRequest;
 
 class SabersController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+
     public function index() // risponde alla rotta /admin/lightsabers (GET)
     {
-
+        // Show also trashed results in the table using ['sabers' => LightSaber::withTrashed()->get()]
         return view('admin.lightsabers.index', ['sabers' => LightSaber::all()]);
     }
 
@@ -31,15 +33,31 @@ class SabersController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request) // risponde alla rotta /admin/lightsabers (POST)
+    public function store(StoreLightsaberRequest $request) // risponde alla rotta /admin/lightsabers (POST)
     {
+
         //dd($request->all());
 
-        $data = $request->all();
+        /* Validation inside the controller method
+         $val_data = $request->validate([
+            'name' => 'required|min:3|max:50',
+            'price' => 'nullable',
+            'cover_image' => 'nullable|image|max:100'
+
+        ]); */
+
+        //validate all fields
+        //dd($val_data);
+        //$data = $request->all();
+
+
+        # Validation with formRequest
+        $val_data = $request->validated();
+
         //$file_path = null;
         if ($request->has('cover_image')) {
             $file_path =  Storage::put('sabers_images', $request->cover_image);
-            $data['cover_image'] = $file_path;
+            $val_data['cover_image'] = $file_path;
         }
         //dd($file_path);
 
@@ -53,8 +71,8 @@ class SabersController extends Controller
         $saber->save();
  */
         //With mass assignment
-        //dd($data);
-        $lightsaber = LightSaber::create($data);
+        //dd($val_data);
+        LightSaber::create($val_data);
 
         // LightSaber::fill() // alternativa
 
@@ -90,28 +108,49 @@ class SabersController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, LightSaber $lightsaber)
+    public function update(UpdateLightsaberRequest $request, LightSaber $lightsaber)
     {
+
+
         //dd($request->all());
-        $data = $request->all();
+        // Validate data
+        /*      $val_data = $request->validate([
+            'name' => 'required|min:3|max:50',
+            'price' => 'nullable',
+            'cover_image' => 'nullable|image|max:100'
+        ]); */
+
+        //dd($val_data);
+
+        //$data = $request->all();
         //dd($lightsaber->cover_image);
         //dd($lightsaber);
 
-        if ($request->has('cover_image') && $lightsaber->cover_image) {
+        $val_data = $request->validated();
 
-            //dd('update the image');
-            // delete the previous image
-            Storage::delete($lightsaber->cover_image);
+        //dd($request->has('cover_image'), $lightsaber->cover_image);
 
-            // save the new image and take its path
+
+
+
+        // if the request has a cover image key
+        if ($request->has('cover_image')) {
+            // - save the image inside the filesysem
             $newImageFile = $request->cover_image;
             $path = Storage::put('sabers_images', $newImageFile);
-            $data['cover_image'] = $path;
+            // check if the db has a cover_image not null
+            if (!is_null($lightsaber->cover_image) && Storage::fileExists($lightsaber->cover_image)) {
+                // delete it and save it to the val_data
+                Storage::delete($lightsaber->cover_image);
+            }
+            $val_data['cover_image'] = $path;
         }
 
-        //dd($data);
 
-        $lightsaber->update($data);
+        // Here we have a filesystem instance insteam of the file path
+        //dd($val_data);
+
+        $lightsaber->update($val_data);
         return to_route('lightsabers.index')->with('message', 'Welldone! Saber updated successfully 👍'); // new function to_route() laravel 9
 
     }
@@ -122,6 +161,7 @@ class SabersController extends Controller
     public function destroy(LightSaber $lightsaber)
     {
         //dd($lightsaber);
+        // T Handle the soft deletion case for the image file
         if (!is_null($lightsaber->cover_image)) {
             Storage::delete($lightsaber->cover_image);
         }
